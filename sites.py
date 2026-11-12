@@ -11,8 +11,23 @@ CANDIDATE_SITES = {
 
 
 def get_site_list():
-    return list(CANDIDATE_SITES.keys())
+    return sorted(CANDIDATE_SITES)
 
 
 def get_coords(name: str):
-    return CANDIDATE_SITES.get(name)
+    if not isinstance(name, str):
+        return None
+
+    normalized = name.strip()
+    if not normalized:
+        return None
+
+    if normalized in CANDIDATE_SITES:
+        return CANDIDATE_SITES[normalized]
+
+    lowered = normalized.lower()
+    for site_name, coords in CANDIDATE_SITES.items():
+        if site_name.lower() == lowered:
+            return coords
+
+    return None
