@@ -3,4 +3,8 @@ __pycache__/
 venv/
 .venv/
 .streamlit/secrets.toml
-de421.bsp
+.DS_Store
+
+# Scientific kernels are explicitly provisioned locally; track only their manifest.
+data/kernels/*
+!data/kernels/manifest.json
