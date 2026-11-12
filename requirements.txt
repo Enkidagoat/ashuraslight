@@ -1,0 +1,5 @@
+streamlit>=1.28
+skyfield>=1.46
+numpy
+pandas
+plotly
