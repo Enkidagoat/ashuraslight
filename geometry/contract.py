@@ -6,9 +6,9 @@ Python geometry service is the sole producer of these structures.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime
-from typing import Literal, Optional, Sequence
+from typing import Literal, Optional
 
 
 # ---------------------------------------------------------------------------
@@ -35,10 +35,6 @@ PlanningStatus = Literal[
     "DATA_INSUFFICIENT",
 ]
 
-
-# ---------------------------------------------------------------------------
-# Provenance & Limitations (always present)
-# ---------------------------------------------------------------------------
 
 @dataclass(frozen=True)
 class Provenance:
@@ -68,10 +64,6 @@ class Limitations:
     )
 
 
-# ---------------------------------------------------------------------------
-# Request shapes
-# ---------------------------------------------------------------------------
-
 @dataclass(frozen=True)
 class InstantRequest:
     latitude_deg: float
@@ -91,10 +83,6 @@ class WindowRequest:
     horizon_mask_deg: float = 0.0
     site_id: Optional[str] = None
 
-
-# ---------------------------------------------------------------------------
-# Instant geometry
-# ---------------------------------------------------------------------------
 
 @dataclass(frozen=True)
 class InstantGeometry:
@@ -117,28 +105,24 @@ class InstantGeometry:
     solar_disk_visible: bool
     solar_disk_fully_clear: bool
 
-    # Optional geometric disk fraction (chord), not an energy quantity
     solar_disk_fraction: float
 
-    # Corrected horizontal-surface incidence proxy
-    horizontal_incidence_proxy: float          # 0…1
-    horizontal_incidence_pct: float            # 0…100
+    horizontal_incidence_proxy: float
+    horizontal_incidence_pct: float
 
     earth_visibility: EarthVisibilityState
     earth_visibility_reason: str
 
-    sub_solar_lat_deg: float
-    sub_solar_lon_deg: float
-    sub_earth_lat_deg: float
-    sub_earth_lon_deg: float
+    # Optional; None means not computed by the current geometry engine.
+    # Must never be treated as a verified physical vector when None.
+    sub_solar_lat_deg: Optional[float]
+    sub_solar_lon_deg: Optional[float]
+    sub_earth_lat_deg: Optional[float]
+    sub_earth_lon_deg: Optional[float]
 
     provenance: Provenance
     limitations: Limitations
 
-
-# ---------------------------------------------------------------------------
-# Window
-# ---------------------------------------------------------------------------
 
 @dataclass(frozen=True)
 class WindowSample:
@@ -157,13 +141,13 @@ class WindowSample:
     earth_clearance_deg: float
     geometric_earth_visible: bool
     approx_earth_clear: bool
-    earth_visible_for_aggregate: bool          # VISIBLE or GRAZING
+    earth_visible_for_aggregate: bool
 
 
 @dataclass(frozen=True)
 class WindowSummary:
     request: WindowRequest
-    series: tuple[WindowSample, ...]
+    series: tuple
 
     sunlight_hours: float
     sunlight_pct: float
@@ -188,10 +172,6 @@ class WindowSummary:
     limitations: Limitations
 
 
-# ---------------------------------------------------------------------------
-# Comparison
-# ---------------------------------------------------------------------------
-
 @dataclass(frozen=True)
 class ScenarioComparison:
     scenario_a: WindowSummary
@@ -199,7 +179,7 @@ class ScenarioComparison:
     sunlight_pct_delta: float
     earth_visible_pct_delta: float
     simultaneous_pct_delta: float
-    primary_score: float                       # simultaneous_pct_B − simultaneous_pct_A
+    primary_score: float
     primary_score_definition: str = (
         "Δ simultaneous Sun+Earth visibility percentage points (B − A)"
     )

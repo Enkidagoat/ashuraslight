@@ -8,9 +8,9 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Optional, Sequence
+from typing import Optional
 
-from ephemeris import LunarGeometry, build_hourly_utc_grid, GeometryInputError
+from ephemeris import LunarGeometry, GeometryInputError
 from sites import Site
 
 from geometry.contract import (
@@ -71,7 +71,9 @@ def _site_from_request(
         longitude_convention="signed east-positive degrees",
         reference_frame="MOON_ME_DE421",
         elevation_m=0.0,
-        coordinate_interpretation="User or curated coordinates interpreted as planetocentric MOON_ME_DE421.",
+        coordinate_interpretation=(
+            "User or curated coordinates interpreted as planetocentric MOON_ME_DE421."
+        ),
         source_url="local://custom",
         source_coordinate_text=f"{latitude_deg:.6f}, {longitude_deg:.6f}",
     )
@@ -108,8 +110,8 @@ class GeometryService:
         i_proxy = horizontal_incidence_proxy(sun_el, sun_clear)
         i_pct = 100.0 * i_proxy
 
-        # Sub-solar / sub-Earth are not yet computed by the core engine.
-        # Placeholder zeros keep the contract shape stable; Milestone 2 can enrich.
+        # Sub-solar / sub-Earth are not computed by the current Skyfield path.
+        # Explicit None prevents zero placeholders from being treated as geometry.
         return InstantGeometry(
             request=request,
             sun_elevation_deg=sun_el,
@@ -131,10 +133,10 @@ class GeometryService:
             horizontal_incidence_pct=i_pct,
             earth_visibility=earth_vis,
             earth_visibility_reason=earth_reason,
-            sub_solar_lat_deg=0.0,
-            sub_solar_lon_deg=0.0,
-            sub_earth_lat_deg=0.0,
-            sub_earth_lon_deg=0.0,
+            sub_solar_lat_deg=None,
+            sub_solar_lon_deg=None,
+            sub_earth_lat_deg=None,
+            sub_earth_lon_deg=None,
             provenance=_default_provenance(),
             limitations=_default_limitations(mask),
         )
@@ -198,7 +200,6 @@ class GeometryService:
             simultaneous_flags.append(disk_vis and earth_agg)
 
         n = len(samples)
-        # Use n samples for percentage (closed sample convention, documented)
         sunlight_count = sum(sun_disk_flags)
         earth_count = sum(earth_vis_flags)
         simultaneous_count = sum(simultaneous_flags)
