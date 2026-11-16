@@ -100,8 +100,16 @@ python -m pytest -q
 
 Tests cover UTC sampling and input bounds, lunar-frame geometry, kernel integrity, fixed-epoch comparisons against independently generated NAIF CSPICE reference values, and Streamlit behavior. CSPICE is used only to document and validate reference values; it is not an application dependency. See [`docs/reference-validation.md`](docs/reference-validation.md) for the epoch, values, and reference setup.
 
-## Project notes
+## Engineering and project documentation
+
+- [`AGENTS.md`](AGENTS.md) — agent read order, scientific invariants, repository boundaries, and handoff rules.
+- [Current status](docs/STATUS.md) — living implementation state, evidence classifications, blockers, and next checkpoint.
+- [Project SDLC](docs/SDLC.md) — risk-adaptive development, review, verification, and release rules.
+- [Architecture](docs/ARCHITECTURE.md) — observed components, active calculation path, and service boundary.
+- [Changelog](CHANGELOG.md) — meaningful project changes.
+
+## Scientific and implementation references
 
 - [`docs/technical-decisions.md`](docs/technical-decisions.md) — frames, conventions, kernel sources, and limitations.
-- [`docs/implementation-report.md`](docs/implementation-report.md) — implementation history and verification notes.
+- [`docs/implementation-report.md`](docs/implementation-report.md) — historical implementation report; its test result is tied to its stated base revision.
 - [`docs/reference-validation.md`](docs/reference-validation.md) — independent fixed-epoch geometry reference.
